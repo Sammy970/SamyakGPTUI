@@ -76,10 +76,10 @@ const Chat = () => {
 
     const [body, setBody] = useState([]);
 
-    async function rephrasePrompt(prompt) {
+    async function rephrasePrompt() {
         try {
-            const response = await axios.post('https://promptperfect.xyz/rephrase', prompt);
-            return response.data.rephrased;
+            const response = await axios.post('https://test-server-deploy-6poeema7y-sammy970.vercel.app/prompt-perfect');
+            return response;
         } catch (error) {
             console.error(error);
             throw new Error('Rephrasing request failed');
@@ -94,7 +94,7 @@ const Chat = () => {
 
         if (userInput.startsWith('perfect')) {
             const input = { "text": userInput };
-            console.log(rephrasePrompt(input))
+            console.log(rephrasePrompt())
         }
 
         // For context history of bot
