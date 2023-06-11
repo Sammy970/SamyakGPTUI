@@ -1,0 +1,151 @@
+@font-face {
+    font-family: userMsgFont;
+    src: url('../TestSöhne-Buch.otf');
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Inter&display=swap');
+
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    height: 93vh;
+    /* max-width: 800px; */
+    width: 1120px;
+    margin-left: auto;
+    margin-right: auto;
+    /* margin-bottom: 300px; */
+    /* margin-bottom: 100; */
+    padding: 20px;
+    /* overflow: hidden; */
+    /* resize: none; */
+}
+
+.avatarImage {
+    border-radius: 500px;
+    height: 50px;
+    width: 50px;
+    margin-bottom: 20px;
+}
+
+.messages {
+    flex-grow: 1;
+    overflow-y: scroll;
+    scrollbar-width: thin;
+    scrollbar-color: transparent transparent;
+    /* overflow: hidden; */
+    /* resize: none; */
+}
+
+.messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.messages::-webkit-scrollbar-thumb {
+    background-color: transparent;
+}
+
+.messages::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+a {
+    color: #C9C9CF ;
+    font-weight: 560;
+    /* Set the desired color for the links */
+}
+
+.message {
+    background-color: #f0f0f0;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 10px;
+    width: 1024px;
+    white-space: pre-line;
+}
+
+.message:last-child {
+    margin-bottom: 10;
+}
+
+.message.user-message {
+    background-color: #343541;
+    color: #C9C9CF;
+    font-size: medium;
+    font-family: userMsgFont;
+}
+
+.message.bot-message {
+    background-color: #444654;
+    color: #D1D5DB;
+    font-size: medium;
+    font-family: 'Inter', sans-serif;
+}
+
+.copy-button {
+    flex-direction: row;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: none;
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    color: #999;
+    font-family: 'Inter', sans-serif;
+}
+
+.copy-button p {
+    color: #D1D5DB;
+}
+
+.input-form {
+    display: flex;
+    gap: 30px;
+    margin-top: 20px;
+    /* max-width: 87vh; */
+    /* width: 1000px; */
+    margin-left: auto;
+    justify-content: center;
+    margin-right: auto;
+    /* align-self: center; */
+}
+
+.input-form textarea[type="text"] {
+    flex-grow: 1;
+    padding: 20px;
+    width: 650px;
+    color: #FFFFFF;
+    background-color: #40414F;
+    border: 1px solid #40414F;
+    border-radius: 14px;
+    font-weight: 340;
+    overflow: hidden;
+    resize: none;
+    font-size: medium;
+    font-family: userMsgFont;
+}
+
+::placeholder {
+    /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: #8E8EA0;
+    /* opacity: 1; */
+    /* Firefox */
+}
+
+.input-form button {
+    padding: 8px 16px;
+    border: none;
+    margin-top: 4px;
+    width: 75px;
+    height: 75px;
+    background-color: #03a33e;
+    color: #fff;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.input-form button:disabled {
+    background-color: #686868;
+    cursor: not-allowed;
+}

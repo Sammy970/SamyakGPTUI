@@ -1,0 +1,20 @@
+.settings-modal-body div {
+    margin-bottom: 30px;
+}
+
+.settings-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.settings-content {
+    margin-bottom: 20px;
+}
+
+.close-button {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+}
