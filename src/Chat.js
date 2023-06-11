@@ -4,7 +4,7 @@ import "./Chat.css";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-import { rephrasePrompt } from "prompt-perfect-plugin";
+// import { rephrasePrompt } from "prompt-perfect-plugin";
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
@@ -75,6 +75,16 @@ const Chat = () => {
     }, [settingOptions]);
 
     const [body, setBody] = useState([]);
+
+    async function rephrasePrompt(prompt) {
+        try {
+            const response = await axios.post('https://promptperfect.xyz/rephrase', prompt);
+            return response.data.rephrased;
+        } catch (error) {
+            console.error(error);
+            throw new Error('Rephrasing request failed');
+        }
+    }
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
