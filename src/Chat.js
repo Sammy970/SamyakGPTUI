@@ -78,7 +78,7 @@ const Chat = () => {
 
     async function rephrasePrompt() {
         try {
-            const response = await axios.post('https://test-server-deploy-6poeema7y-sammy970.vercel.app/prompt-perfect');
+            const response = await axios.post('https://test-server-deploy-hrwq3811v-sammy970.vercel.app/prompt-perfect');
             return response;
         } catch (error) {
             console.error(error);
