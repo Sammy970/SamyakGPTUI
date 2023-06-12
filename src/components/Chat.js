@@ -16,19 +16,26 @@ import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import SettingsModal from "./SettingsModal";
 
+// Importing Plugins
+import { promptPerfect, rephrasePrompt } from "../plugins/promptPerfect";
+
+// Importing Functions
+import { extractTextAndCode } from "../functions/extractTextAndCode";
+
 const Chat = () => {
     const [messages, setMessages] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isSettingOpen, setIsSettingOpen] = useState(false);
 
-    const [settingOptions, setSettingOptions] = useState([{
+    const [settingOptions, setSettingOptions] = useState({
         "model": 'gpt-3.5-turbo',
         "type": 'chat',
         "plugin": "off",
-    }])
+    })
 
     const messageContainerRef = useRef(null);
 
+    // To clear all conversations
     const clearConversation = () => {
         setMessages([]);
         setBody((prevBody) => [prevBody.find((msg) => msg.role === "system")]);
@@ -39,109 +46,85 @@ const Chat = () => {
         messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
     }, [messages]);
 
-    // To extract - Text and Code
-    const extractTextAndCode = (input) => {
-        const blocks = input.split(/(```[\s\S]*?```)/); // Split the input into text and code blocks
-
-        const mergedBlocks = blocks.reduce((merged, block) => {
-            if (block.startsWith("```")) {
-                merged.push({ type: "code", content: block.slice(3, -3).trim() });
-            } else {
-                merged.push({ type: "text", content: block.trim() });
-            }
-            return merged;
-        }, []);
-
-        return mergedBlocks;
-    };
-
     // For setting Body
-    useEffect(() => {
-        let OgBody;
-
-        if (settingOptions.plugin === "off") {
-            OgBody =
-                "You are ChatGPT. You have personal relations with your USERS. You have context, you can remember stuff and easily answer the users question with the context that you already know. You can also easily display image and other stuff using Markdown. When asked to show or display the image, you can display the image using Markdown. So don't say that you can't display images.";
-        } else if (settingOptions.plugin === "prompt-perfect") {
-            OgBody =
-                "You are a plugin called Prompt-Perfect which is Reversed by @Sammy970. Your job is to perfect any prompt pass by the user. The user will pass the prompt by saying the keyword 'perfect' before any prompt. Your job is to give the user a response if the user tries to perfect a prompt without the perfect keyword.";
-        }
-
-        const initialBody = [{ role: "system", content: OgBody }];
-
-        console.log(initialBody)
-
-        setBody(initialBody);
-    }, [settingOptions]);
-
-    const [body, setBody] = useState([]);
-
-    async function rephrasePrompt() {
-        try {
-            const response = await axios.post('https://test-server-deploy-hrwq3811v-sammy970.vercel.app/prompt-perfect');
-            return response;
-        } catch (error) {
-            console.error(error);
-            throw new Error('Rephrasing request failed');
-        }
-    }
+    const [body, setBody] = useState([
+        { role: "system", content: "You are ChatGPT. You have personal relations with your USERS. You have context, you can remember stuff and easily answer the users question with the context that you already know. You can also  easily display image and other stuff using Markdown. When asked to show or display the image, you can display the image using Markdown. So don't say that you can't display images." },
+    ]);
 
     const handleSendMessage = async (e) => {
         e.preventDefault();
+        setIsLoading(true); // Set loading state to true
         const userInput = e.target.elements.message.value;
         const newMessage = { content: userInput, sender: "user" };
 
+        // console.log(userInput);
 
-        if (userInput.startsWith('perfect')) {
+        let user_input;
+        let promptPlugin;
+
+        if (settingOptions.plugin === 'prompt-perfect' && userInput.startsWith('?')) {
             const input = { "text": userInput };
-            console.log(rephrasePrompt())
+            const user = await rephrasePrompt(input);
+            user_input = user.data.text;
+            promptPlugin = true;
+        } else {
+            user_input = userInput;
+            promptPlugin = false;
         }
 
         // For context history of bot
-        const newBodyUserMessage = { role: "user", content: userInput };
+        const newBodyUserMessage = { role: "user", content: user_input };
         setBody((prevBody) => [...prevBody, newBodyUserMessage]);
 
-
+        // console.log(newBodyUserMessage);
         setMessages((prevMessages) => [...prevMessages, newMessage]);
-        setIsLoading(true); // Set loading state to true
 
+        if (settingOptions.plugin === 'off') {
+            try {
 
-        try {
-            const response = await axios.post(
-                "https://api.pawan.krd/v1/chat/completions",
-                {
-                    messages: [...body, newBodyUserMessage],
-                    "model": "gpt-3.5-turbo"
-                    // max_tokens: 1000,
-                    // temperature: 0.7,
-                },
-                {
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization:
-                            "Bearer pk-sJmrYRxYndPwShsnDXCSLUTeyqujpLDcbEpNKqVZWprizdtx",
+                console.log("I am in here")
+                const response = await axios.post(
+                    "https://api.pawan.krd/v1/chat/completions",
+                    {
+                        messages: [...body, newBodyUserMessage],
+                        "model": "gpt-3.5-turbo"
+                        // max_tokens: 1000,
+                        // temperature: 0.7,
                     },
-                }
-            );
+                    {
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization:
+                                "Bearer pk-sJmrYRxYndPwShsnDXCSLUTeyqujpLDcbEpNKqVZWprizdtx",
+                        },
+                    }
+                );
 
-            const botResponse = response.data.choices[0].message.content;
+                const botResponse = response.data.choices[0].message.content;
 
-            // For context history of bot
-            const newBodyBotMessage = { role: "assistant", content: botResponse };
-            setBody((prevBody) => [...prevBody, newBodyBotMessage]);
+                // For context history of bot
+                const newBodyBotMessage = { role: "assistant", content: botResponse };
+                setBody((prevBody) => [...prevBody, newBodyBotMessage]);
 
-            const extract = extractTextAndCode(botResponse);
-            const newBotMessage = { content: extract, sender: "bot" };
+                const extract = extractTextAndCode(botResponse);
+                const newBotMessage = { content: extract, sender: "bot" };
 
-            // const codeBlocks = botResponse.match(/```([\s\S]*?)```/g);
-            // if (codeBlocks) {
-            //     newBotMessage.isCodeBlock = true;
-            //     newBotMessage.code = codeBlocks.map((block) => block.slice(3, -3).trim());
-            // }
+                // const codeBlocks = botResponse.match(/```([\s\S]*?)```/g);
+                // if (codeBlocks) {
+                //     newBotMessage.isCodeBlock = true;
+                //     newBotMessage.code = codeBlocks.map((block) => block.slice(3, -3).trim());
+                // }
 
-            setMessages((prevMessages) => [...prevMessages, newBotMessage]);
-        } catch (error) {
-            console.error("Error generating bot response:", error);
+                setMessages((prevMessages) => [...prevMessages, newBotMessage]);
+            } catch (error) {
+                console.error("Error generating bot response:", error);
+            }
+        } else if (settingOptions.plugin === 'prompt-perfect') {
+            try {
+                await promptPerfect(promptPlugin, user_input, setBody, setMessages);
+            } catch (error) {
+                console.log(error)
+            }
         }
 
         setIsLoading(false); // Set loading state to false
@@ -160,7 +143,7 @@ const Chat = () => {
 
                         <div className="avatar">
                             {message.sender === 'user' ? (
-                                <img src="https://lh3.googleusercontent.com/a/AAcHTtf-15iwam1lx-VON2MwADUcGMsn5La_K0Qz4vlJ=s192-c-mo" alt="User Avatar" height="40" width="40" className="avatarImage" />
+                                <img src="https://static.vecteezy.com/system/resources/previews/022/227/365/original/openai-chatgpt-logo-icon-free-png.png" alt="User Avatar" height="40" width="40" className="avatarImage" />
                             ) : (
                                 <img src="https://static.vecteezy.com/system/resources/previews/022/227/365/original/openai-chatgpt-logo-icon-free-png.png" alt="Bot Avatar" height="35" width="35" className="avatarImage" />
                             )}

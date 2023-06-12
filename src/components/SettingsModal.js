@@ -67,7 +67,7 @@ const SettingsModal = ({ isOpen, onClose, setSettingOptions, settingOptions }) =
                             defaultValue={settingOptions.plugin}
                             onChange={handlePluginChange}
                         >
-                            <option >Open this Select Plugin</option>
+                            <option disabled>Open this Select Plugin</option>
                             <option value="off">OFF</option>
                             <option value="prompt-perfect">prompt-perfect</option>
                         </Form.Select>
