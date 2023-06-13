@@ -183,7 +183,7 @@ const Chat = () => {
 
             } catch (error) {
                 console.error("Error generating bot response:", error);
-                if (error.response && error.response.status === 400) {
+                if (error.response || error.response.status === 400) {
                     setBody((prevBody) => prevBody.filter((msg) => msg.role !== "user"));
                     let botResponse = 'Bad Request : Code 400';
                     // For context history of bot
