@@ -8,7 +8,7 @@
 .chat-container {
     display: flex;
     flex-direction: column;
-    /* height: 93vh; */
+    height: 93vh;
     /* max-width: 800px; */
     width: 1120px;
     margin-left: auto;
@@ -18,8 +18,6 @@
     padding: 20px;
     /* overflow: hidden; */
     /* resize: none; */
-    background-color: #353641;
-
 }
 
 .api-input-form {
@@ -28,8 +26,7 @@
     align-items: center;
     justify-content: center;
     /* background-color: red; */
-    /* height: 87vh; */
-    height: 76vh;
+    height: 87vh;
 }
 
 .api-input-form .submit-button {
@@ -51,25 +48,25 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    /* margin-top: 20px; */
+    margin-top: 20px;
     /* background-color: #03a33e; */
 }
 
-.api-input-form input:focus {
+.input-center input:focus {
     outline: none;
 }
 
-.api-input-form h2 {
+.input-center h2 {
     color: wheat;
 }
 
-.api-input-form h4 {
+.input-center h4 {
     color: wheat;
     font-size: large;
     margin-bottom: 40px;
 }
 
-.api-input-form input {
+.input-center input {
     margin-bottom: 16px;
     padding: 10px;
     width: 300px;
@@ -79,7 +76,7 @@
     border-radius: 4px;
 }
 
-.api-input-form input::placeholder {
+.input-center input::placeholder {
     /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: #8E8EA0;
     /* opacity: 1; */
@@ -234,26 +231,17 @@ a {
 
 
 /* Styles for mobile phones (up to 400px) */
-@media (max-width: 430px) {
+@media (max-width: 440px) {
     .chat-container {
         width: 100%;
         padding: 10px;
-        background-color: #353641;
-    }
-
-    .messages {
-        width: 100%;
-        overflow-y: scroll;
-        scrollbar-width: thin;
-        scrollbar-color: transparent transparent;
-        height: 76vh;
     }
 
     .message {
         background-color: #f0f0f0;
         border-radius: 8px;
         padding: 20px;
-        /* margin-bottom: 5px; */
+        margin-bottom: 10px;
         width: 100%;
     }
 
@@ -269,7 +257,7 @@ a {
     .input-form {
         flex-direction: column;
         gap: 10px;
-        /* margin-bottom: -50px; */
+        margin-bottom: -50px;
     }
 
     .input-form textarea[type="text"] {

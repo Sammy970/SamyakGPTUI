@@ -10,7 +10,7 @@
 @media (max-width: 440px) {
   .test-container {
     background-color: #353641;
-    overflow-y: hidden;
+    /* overflow-y: hidden; */
   }
 }
 

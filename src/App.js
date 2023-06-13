@@ -3,9 +3,9 @@ import Chat from './components/Chat';
 
 function App() {
   return (
-    <Chat />
-    // <div className="test-container">
-    // </div>
+    <div className="test-container">
+      <Chat />
+    </div>
   );
 }
 
