@@ -48,25 +48,25 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    margin-top: 20px;
+    /* margin-top: 20px; */
     /* background-color: #03a33e; */
 }
 
-.input-center input:focus {
+.api-input-form input:focus {
     outline: none;
 }
 
-.input-center h2 {
+.api-input-form h2 {
     color: wheat;
 }
 
-.input-center h4 {
+.api-input-form h4 {
     color: wheat;
     font-size: large;
     margin-bottom: 40px;
 }
 
-.input-center input {
+.api-input-form input {
     margin-bottom: 16px;
     padding: 10px;
     width: 300px;
@@ -76,7 +76,7 @@
     border-radius: 4px;
 }
 
-.input-center input::placeholder {
+.api-input-form input::placeholder {
     /* Chrome, Firefox, Opera, Safari 10.1+ */
     color: #8E8EA0;
     /* opacity: 1; */
@@ -231,7 +231,7 @@ a {
 
 
 /* Styles for mobile phones (up to 400px) */
-@media (max-width: 440px) {
+@media (max-width: 430px) {
     .chat-container {
         width: 100%;
         padding: 10px;

@@ -273,7 +273,6 @@ const Chat = () => {
 
             {!keyUrlEntered &&
                 <form className="api-input-form" onSubmit={handleAPI}>
-                    <div className="input-center">
                         <h2>Welcome to SamyakGPT UI</h2>
                         <h4>a clean way to imagine new things</h4>
                         <input
@@ -292,7 +291,6 @@ const Chat = () => {
                             value={urlInput}
                             onChange={(e) => setUrlInput(e.target.value)}
                         />
-                    </div>
                     <button type="submit" disabled={!isLoading} className="submit-button">
                         Submit</button>
                 </form>
