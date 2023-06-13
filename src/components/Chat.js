@@ -18,14 +18,20 @@ import SettingsModal from "./SettingsModal";
 
 // Importing Plugins
 import { promptPerfect, rephrasePrompt } from "../plugins/promptPerfect";
+import { webSearch, webSearchApiOutput } from "../plugins/webSearch";
+import { webPilot, webPilotApiOutput, seperateTextAndLink } from "../plugins/webPilot";
 
 // Importing Functions
 import { extractTextAndCode } from "../functions/extractTextAndCode";
 
+
 const Chat = () => {
     const [messages, setMessages] = useState([]);
-    const [isLoading, setIsLoading] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [isSettingOpen, setIsSettingOpen] = useState(false);
+    const [apiKeyInput, setApiKeyInput] = useState('');
+    const [urlInput, setUrlInput] = useState('');
+    const [keyUrlEntered, setKeyUrlEntered] = useState(false);
 
     const [settingOptions, setSettingOptions] = useState({
         "model": 'gpt-3.5-turbo',
@@ -51,6 +57,12 @@ const Chat = () => {
         { role: "system", content: "You are ChatGPT. You have personal relations with your USERS. You have context, you can remember stuff and easily answer the users question with the context that you already know. You can also  easily display image and other stuff using Markdown. When asked to show or display the image, you can display the image using Markdown. So don't say that you can't display images." },
     ]);
 
+    const handleAPI = (e) => {
+        e.preventDefault();
+        setIsLoading(false);
+        setKeyUrlEntered(true);
+    }
+
     const handleSendMessage = async (e) => {
         e.preventDefault();
         setIsLoading(true); // Set loading state to true
@@ -61,15 +73,50 @@ const Chat = () => {
 
         let user_input;
         let promptPlugin;
+        let webSearchPlugin;
+        let webPilotPlugin;
+        let webPilotPluginText;
 
         if (settingOptions.plugin === 'prompt-perfect' && userInput.startsWith('?')) {
-            const input = { "text": userInput };
-            const user = await rephrasePrompt(input);
-            user_input = user.data.text;
-            promptPlugin = true;
-        } else {
+            try {
+                const input = { "text": userInput };
+                const user = await rephrasePrompt(input);
+                user_input = user.data.text;
+                promptPlugin = true;
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        else if (settingOptions.plugin === 'web-search' && userInput.startsWith('?')) {
+            try {
+                const prompt = { query: userInput }
+                const webSearchPluginResponse = await webSearchApiOutput(prompt);
+                user_input = webSearchPluginResponse.result;
+                webSearchPlugin = true
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        else if (settingOptions.plugin === 'web-pilot' && userInput.startsWith('?')) {
+            try {
+                const values = await seperateTextAndLink(userInput);
+                const link = { link: values[0] }
+                webPilotPluginText = values[1];
+
+                const output = await webPilotApiOutput(link);
+                // console.log(output.content);
+                user_input = output.content;
+                // console.log(user_input)
+                webPilotPlugin = true;
+            } catch (error) {
+                console.log(error)
+            }
+        }
+        else {
             user_input = userInput;
             promptPlugin = false;
+            webSearchPlugin = false;
+            webPilotPlugin = false;
         }
 
         // For context history of bot
@@ -79,15 +126,17 @@ const Chat = () => {
         // console.log(newBodyUserMessage);
         setMessages((prevMessages) => [...prevMessages, newMessage]);
 
-        if (settingOptions.plugin === 'off') {
+        if (settingOptions.plugin === 'off' || webSearchPlugin === false) {
             try {
-
+                console.log(urlInput.trim())
+                console.log(apiKeyInput.trim())
                 console.log("I am in here")
+                console.log(body)
                 const response = await axios.post(
-                    "https://api.pawan.krd/v1/chat/completions",
+                    urlInput.trim(),
                     {
                         messages: [...body, newBodyUserMessage],
-                        "model": "gpt-3.5-turbo"
+                        model: "gpt-3.5-turbo",
                         // max_tokens: 1000,
                         // temperature: 0.7,
                     },
@@ -95,10 +144,21 @@ const Chat = () => {
                         headers: {
                             "Content-Type": "application/json",
                             Authorization:
-                                "Bearer pk-sJmrYRxYndPwShsnDXCSLUTeyqujpLDcbEpNKqVZWprizdtx",
+                                `Bearer ${apiKeyInput.trim()}`,
                         },
                     }
                 );
+
+                // Can you understand the intent of the following user input.
+                // Give the output "TREND" if its asking for trending and latest articles on MEDIUM.com.
+                // Give the output "TAGS" if its asking for searching a TAG on MEDIUM.com.
+
+
+                // Don't explain. Just answer.
+                // Only give the output.
+
+
+                // "hello, can you search about AI in medium.com ? "
 
                 const botResponse = response.data.choices[0].message.content;
 
@@ -119,13 +179,30 @@ const Chat = () => {
             } catch (error) {
                 console.error("Error generating bot response:", error);
             }
-        } else if (settingOptions.plugin === 'prompt-perfect') {
+        }
+        else if (settingOptions.plugin === 'prompt-perfect') {
             try {
                 await promptPerfect(promptPlugin, user_input, setBody, setMessages);
             } catch (error) {
                 console.log(error)
             }
         }
+        else if (settingOptions.plugin === 'web-search') {
+            try {
+                await webSearch(webSearchPlugin, user_input, userInput, setBody, setMessages);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+        else if (settingOptions.plugin === 'web-pilot') {
+            try {
+                await webPilot(webPilotPlugin, user_input, webPilotPluginText, setBody, setMessages);
+            } catch (error) {
+                console.log(error);
+            }
+        }
+
+        // console.log(body);
 
         setIsLoading(false); // Set loading state to false
         e.target.elements.message.value = ""; // Clear input field after sending
@@ -189,40 +266,71 @@ const Chat = () => {
                     onClose={() => setIsSettingOpen(false)}
                     setSettingOptions={setSettingOptions}
                     settingOptions={settingOptions}
+                    setKeyUrlEntered={setKeyUrlEntered}
+                    setIsLoading={setIsLoading}
                 />
             )}
 
+            {!keyUrlEntered &&
+                <form className="api-input-form" onSubmit={handleAPI}>
+                    <div className="input-center">
+                        <h2>Welcome to SamyakGPT UI</h2>
+                        <h4>a clean way to imagine new things</h4>
+                        <input
+                            required
+                            type="text"
+                            placeholder="Enter API key"
+                            value={apiKeyInput}
+                            onChange={(e) => {
+                                setApiKeyInput(e.target.value)
+                            }}
+                        />
+                        <input
+                            required
+                            type="text"
+                            placeholder="Enter URL"
+                            value={urlInput}
+                            onChange={(e) => setUrlInput(e.target.value)}
+                        />
+                    </div>
+                    <button type="submit" disabled={!isLoading} className="submit-button">
+                        Submit</button>
+                </form>
+            }
+
             <form className="input-form" onSubmit={handleSendMessage}>
                 <textarea
-
                     type="text"
                     name="message"
                     placeholder="Type a message"
                     disabled={isLoading} // Disable input field if loading is true
                 />
 
-                <button type="submit" disabled={isLoading} className="send-button">
-                    <FontAwesomeIcon icon={faPaperPlane} size="2xl" />
-                </button>
+                <div className="button-group">
+                    <button type="submit" disabled={isLoading} className="send-button">
+                        <FontAwesomeIcon icon={faPaperPlane} size="2xl" />
+                    </button>
 
-                <button className="copy-button" onClick={(e) => {
-                    e.preventDefault();
-                    setIsSettingOpen(!isSettingOpen)
-                }}>
-                    <FontAwesomeIcon icon={faCog} size="2xl" />
-                </button>
-
-                <button
-                    className="clear-button"
-                    onClick={(e) => {
+                    <button className="copy-button" onClick={(e) => {
                         e.preventDefault();
-                        clearConversation();
-                    }}
-                    disabled={isLoading}
-                >
-                    <FontAwesomeIcon icon={faTrashAlt} size="2xl" />
-                </button>
+                        setIsSettingOpen(!isSettingOpen)
+                    }}>
+                        <FontAwesomeIcon icon={faCog} size="2xl" />
+                    </button>
+
+                    <button
+                        className="clear-button"
+                        onClick={(e) => {
+                            e.preventDefault();
+                            clearConversation();
+                        }}
+                        disabled={isLoading}
+                    >
+                        <FontAwesomeIcon icon={faTrashAlt} size="2xl" />
+                    </button>
+                </div>
             </form>
+
         </div>
     );
 };

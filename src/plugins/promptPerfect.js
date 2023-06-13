@@ -39,7 +39,7 @@ export const promptPerfect = async (promptPlugin, user_input, setBody, setMessag
     } else {
         try {
             const response = await axios.post(
-                "https://api.pawan.krd/v1/chat/completions",
+                "https://chimeragpt.adventblocks.cc/v1/chat/completions",
                 {
                     messages: [{ "role": "system", "content": "You are a Prompt Perfect Plugin made by Sammy970. Your job is to help users to create a perfect prompt. In order to create the perfect prompt they need to type `? ` and then the prompt." }, { "role": "user", "content": "How to use this plugin? Don't tell extra stuff just tell me whats important" }],
                     "model": "gpt-3.5-turbo"
@@ -50,7 +50,7 @@ export const promptPerfect = async (promptPlugin, user_input, setBody, setMessag
                     headers: {
                         "Content-Type": "application/json",
                         Authorization:
-                            "Bearer pk-sJmrYRxYndPwShsnDXCSLUTeyqujpLDcbEpNKqVZWprizdtx",
+                        "Bearer u60hevlh8BewpPrqUJtGBkae4ZsvMuFxeUEE8A0s-E0",
                     },
                 }
             );

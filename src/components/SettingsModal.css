@@ -2,6 +2,28 @@
     margin-bottom: 30px;
 }
 
+.modal-header {
+    background-color: #40414F;
+    color: wheat;
+}
+
+.modal-body {
+    background-color: #40414F;
+}
+
+.modal-body .change-API-button {
+    background-color: #03a33e;
+    border: none;
+    margin-left: auto;
+    margin-right: auto;
+    display: flex;
+}
+
+.modal-body .change-API-button:hover {
+    background-color: #03a33e;
+    border: none;
+}
+
 .settings-header {
     display: flex;
     justify-content: space-between;
@@ -13,8 +35,12 @@
     margin-bottom: 20px;
 }
 
-.close-button {
-    background-color: transparent;
+.modal-footer .close-button {
+    background-color: #03a33e;
     border: none;
-    cursor: pointer;
+}
+
+.modal-footer .close-button:hover {
+    background-color: #03a33e;
+    border: none;
 }

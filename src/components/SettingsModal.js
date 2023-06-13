@@ -3,7 +3,7 @@ import { Modal, Button, FloatingLabel, Form } from 'react-bootstrap';
 
 import './SettingsModal.css';
 
-const SettingsModal = ({ isOpen, onClose, setSettingOptions, settingOptions }) => {
+const SettingsModal = ({ isOpen, onClose, setSettingOptions, settingOptions, setKeyUrlEntered, setIsLoading }) => {
     const handleModelChange = (e) => {
         setSettingOptions((prevOptions) => ({
             ...prevOptions,
@@ -28,11 +28,11 @@ const SettingsModal = ({ isOpen, onClose, setSettingOptions, settingOptions }) =
     return (
         <Modal show={isOpen} onHide={onClose} backdrop="static" centered>
             <Modal.Header closeButton>
-                <Modal.Title>Settings</Modal.Title>
+                <Modal.Title className="settings-modal-title">Settings</Modal.Title>
             </Modal.Header>
             <Modal.Body className="settings-modal-body">
                 <div>
-                    <FloatingLabel controlId="floatingSelectModel" label="Select Model">
+                    <FloatingLabel className="test" controlId="floatingSelectModel" label="Select Model">
                         <Form.Select
                             aria-label="Floating label select example"
                             defaultValue={settingOptions.model}
@@ -54,8 +54,8 @@ const SettingsModal = ({ isOpen, onClose, setSettingOptions, settingOptions }) =
                         >
                             <option >Open this Select Type</option>
                             <option value="chat">Chat</option>
-                            <option value="text">Text Completion</option>
-                            <option value="image">Image Generation</option>
+                            <option disabled value="text">Text Completion</option>
+                            <option disabled value="image">Image Generation</option>
                         </Form.Select>
                     </FloatingLabel>
                 </div>
@@ -69,15 +69,24 @@ const SettingsModal = ({ isOpen, onClose, setSettingOptions, settingOptions }) =
                         >
                             <option disabled>Open this Select Plugin</option>
                             <option value="off">OFF</option>
-                            <option value="prompt-perfect">prompt-perfect</option>
+                            <option value="prompt-perfect">Prompt Perfect</option>
+                            <option value="web-search">Web Search</option>
+                            <option value="web-pilot">Web Pilot</option>
                         </Form.Select>
                     </FloatingLabel>
                 </div>
 
+                <Button className="change-API-button" onClick={() => {
+                    setKeyUrlEntered(false)
+                    onClose()
+                    setIsLoading(true)
+                }}>Change API Endpoint and KEY</Button>
+
+
                 {/* Add more dropdown components or other settings options here */}
             </Modal.Body>
-            <Modal.Footer>
-                <Button onClick={onClose}>Close</Button>
+            <Modal.Footer style={{ backgroundColor: '#40414F' }}>
+                <Button className="close-button" onClick={onClose}>Close</Button>
             </Modal.Footer>
         </Modal>
     );
