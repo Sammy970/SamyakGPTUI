@@ -230,51 +230,51 @@ a {
 }
 
 
-
 /* Styles for mobile phones (up to 400px) */
 @media (max-width: 440px) {
     .chat-container {
         width: 100%;
-        height: auto;
-        /* Remove fixed height to allow content to expand */
         padding: 10px;
-        overflow-y: scroll;
-        /* Enable scrolling for the entire chat container */
     }
 
-    .input-center {
-        margin-bottom: 0;
-        /* Remove margin bottom to prevent overlap */
+    .message {
+        background-color: #f0f0f0;
+        border-radius: 8px;
+        padding: 20px;
+        margin-bottom: 10px;
+        width: 100%;
     }
 
-    .messages {
-        flex-grow: 0;
-        /* Reset flex-grow to prevent content from stretching */
-        height: auto;
-        /* Remove fixed height to allow content to expand */
+    .message:last-child {
+        margin-bottom: 10;
+    }
+
+
+    .input-center input {
+        width: 100%;
     }
 
     .input-form {
         flex-direction: column;
-        align-items: center;
-        /* Align items to the start of the flex container */
-        gap: 20px;
-        margin-top: -100px;
-        /* margin-bottom: 10px; */
-        /* Add some bottom margin for the form */
+        gap: 10px;
+        margin-bottom: -50px;
     }
 
     .input-form textarea[type="text"] {
-        width: calc(100% - 100px);
-        /* Adjust width to fit the available space */
+        width: 100%;
         font-size: small;
         border-radius: 8px;
     }
 
     .input-form button {
-        width: 55px;
-        /* Adjust button width for smaller screens */
-        height: 55px;
-        /* Adjust button height for smaller screens */
+        padding: 8px 16px;
+        border: none;
+        margin-top: 4px;
+        width: 63px;
+        height: 63px;
+        background-color: #03a33e;
+        color: #fff;
+        border-radius: 4px;
+        cursor: pointer;
     }
 }
