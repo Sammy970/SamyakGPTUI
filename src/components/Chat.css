@@ -258,7 +258,7 @@ a {
     .input-form {
         flex-direction: column;
         gap: 10px;
-        margin-bottom: -50px;
+        /* margin-bottom: -30px; */
     }
 
     .input-form textarea[type="text"] {
