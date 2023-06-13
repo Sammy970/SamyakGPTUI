@@ -3,7 +3,7 @@ import { extractTextAndCode } from "../functions/extractTextAndCode";
 
 export async function webSearchApiOutput(prompt) {
     try {
-        const response = await axios.post('http://localhost:8000/web-search', prompt);
+        const response = await axios.post('https://test-server-deploy-nine.vercel.app/web-search', prompt);
         const value = response.data;
         return value;
     } catch (error) {
@@ -11,14 +11,14 @@ export async function webSearchApiOutput(prompt) {
     }
 }
 
-export const webSearch = async (webSearchPlugin, user_input, userInput, setBody, setMessages) => {
+export const webSearch = async (webSearchPlugin, user_input, userInput, setBody, setMessages, apiKeyInput, urlInput) => {
 
     if (webSearchPlugin) {
         try {
             const response = await axios.post(
-                "https://chimeragpt.adventblocks.cc/v1/chat/completions",
+                urlInput.trim(),
                 {
-                    messages: [{ "role": "system", "content": "Search for information from the internet. You can easily suggest people anything. With the content provided to the users, you provide your own opinion based on the search results." }, { "role": "user", "content": `${user_input} Understand this info and answer me the following question in detail with the Title, URL and Result mentioned ${userInput}` }],
+                    messages: [{ "role": "system", "content": "Search for information from the internet. You can easily suggest people anything. With the content provided to the users, you provide your own opinion based on the search results." }, { "role": "user", "content": `${user_input} Understand this info and answer me the following question ${userInput}` }],
                     "model": "gpt-3.5-turbo"
                     // max_tokens: 1000,
                     // temperature: 0.7,
@@ -27,7 +27,7 @@ export const webSearch = async (webSearchPlugin, user_input, userInput, setBody,
                     headers: {
                         "Content-Type": "application/json",
                         Authorization:
-                            "Bearer u60hevlh8BewpPrqUJtGBkae4ZsvMuFxeUEE8A0s-E0",
+                            `Bearer ${apiKeyInput}`,
                     },
                 }
             );

@@ -54,7 +54,23 @@ const Chat = () => {
 
     // For setting Body
     const [body, setBody] = useState([
-        { role: "system", content: "You are ChatGPT. You have personal relations with your USERS. You have context, you can remember stuff and easily answer the users question with the context that you already know. You can also  easily display image and other stuff using Markdown. When asked to show or display the image, you can display the image using Markdown. So don't say that you can't display images." },
+        {
+            role: "system", content: `You are ChatGPT. You have personal relations with your USERS. You have context, you can remember stuff and easily answer the users question with the context that you already know. You can also  easily display image and other stuff using Markdown. When asked to show or display the image, you can display the image using Markdown. So don't say that you can't display images.
+
+            You primarily support three plugins - promptPerfect, webSearch and webPilot. Don't say anything else.
+
+            If you are asked about Plugins, then you can say to enable plugins, go into settings and choose the plugin. If the user ask to how to use the plugin then give the response to the user by asking which plugin they are asking for.
+
+            give all examples in markdown
+
+            We have three plugins which are reversed by Sammy970:
+            promptPerfect: This helps to create a perfect prompt with new details. In order to create the perfect prompt they need to type '? ' and then the prompt. For example - ? Create a story related to Harry Poter.
+
+            webSearch: This plugin lets you search the internet and get results and ask questions to it. To use this you should use the keyword '? '. For example - ? Who is the current president of India?.
+
+            webPilot: This plugin lets you read contents of a URL / Website and then you could ask any questions regarding that. To use this you should us ethe keyword '? '. For example - ?  "https://example.com" Summarize this.
+            `
+        },
     ]);
 
     const handleAPI = (e) => {
@@ -126,12 +142,8 @@ const Chat = () => {
         // console.log(newBodyUserMessage);
         setMessages((prevMessages) => [...prevMessages, newMessage]);
 
-        if (settingOptions.plugin === 'off' || webSearchPlugin === false) {
+        if (settingOptions.plugin === 'off' || webSearchPlugin === false || promptPlugin === false || webPilotPlugin === false) {
             try {
-                console.log(urlInput.trim())
-                console.log(apiKeyInput.trim())
-                console.log("I am in here")
-                console.log(body)
                 const response = await axios.post(
                     urlInput.trim(),
                     {
@@ -153,10 +165,8 @@ const Chat = () => {
                 // Give the output "TREND" if its asking for trending and latest articles on MEDIUM.com.
                 // Give the output "TAGS" if its asking for searching a TAG on MEDIUM.com.
 
-
                 // Don't explain. Just answer.
                 // Only give the output.
-
 
                 // "hello, can you search about AI in medium.com ? "
 
@@ -169,40 +179,46 @@ const Chat = () => {
                 const extract = extractTextAndCode(botResponse);
                 const newBotMessage = { content: extract, sender: "bot" };
 
-                // const codeBlocks = botResponse.match(/```([\s\S]*?)```/g);
-                // if (codeBlocks) {
-                //     newBotMessage.isCodeBlock = true;
-                //     newBotMessage.code = codeBlocks.map((block) => block.slice(3, -3).trim());
-                // }
-
                 setMessages((prevMessages) => [...prevMessages, newBotMessage]);
+
             } catch (error) {
                 console.error("Error generating bot response:", error);
+                if (error.response && error.response.status === 400) {
+                    setBody((prevBody) => prevBody.filter((msg) => msg.role !== "user"));
+                    let botResponse = 'Bad Request : Code 400';
+                    // For context history of bot
+                    let newBodyBotMessage = { role: "assistant", content: botResponse };
+                    setBody((prevBody) => [...prevBody, newBodyBotMessage]);
+                    const extract = extractTextAndCode(botResponse);
+
+                    let newBotMessage = { content: extract, sender: "bot" };
+                    setMessages((prevMessages) => [...prevMessages, newBotMessage]);
+                }
             }
         }
         else if (settingOptions.plugin === 'prompt-perfect') {
             try {
-                await promptPerfect(promptPlugin, user_input, setBody, setMessages);
+                await promptPerfect(promptPlugin, user_input, setBody, setMessages, apiKeyInput, urlInput);
             } catch (error) {
                 console.log(error)
             }
         }
         else if (settingOptions.plugin === 'web-search') {
             try {
-                await webSearch(webSearchPlugin, user_input, userInput, setBody, setMessages);
+                await webSearch(webSearchPlugin, user_input, userInput, setBody, setMessages, apiKeyInput, urlInput);
             } catch (error) {
                 console.log(error);
             }
         }
         else if (settingOptions.plugin === 'web-pilot') {
             try {
-                await webPilot(webPilotPlugin, user_input, webPilotPluginText, setBody, setMessages);
+                await webPilot(webPilotPlugin, user_input, webPilotPluginText, setBody, setMessages, apiKeyInput, urlInput);
             } catch (error) {
                 console.log(error);
             }
         }
 
-        // console.log(body);
+        console.log(body);
 
         setIsLoading(false); // Set loading state to false
         e.target.elements.message.value = ""; // Clear input field after sending

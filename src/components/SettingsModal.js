@@ -40,7 +40,7 @@ const SettingsModal = ({ isOpen, onClose, setSettingOptions, settingOptions, set
                         >
                             <option>Open this Select Model</option>
                             <option value="gpt-3.5-turbo">GPT 3.5 Turbo</option>
-                            <option value="gpt-4">GPT 4</option>
+                            <option disabled value="gpt-4">GPT 4</option>
                         </Form.Select>
                     </FloatingLabel>
                 </div>

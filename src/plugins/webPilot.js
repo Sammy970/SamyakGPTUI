@@ -3,7 +3,7 @@ import { extractTextAndCode } from "../functions/extractTextAndCode";
 
 export async function webPilotApiOutput(prompt) {
     try {
-        const response = await axios.post('http://localhost:8000/web-pilot', prompt);
+        const response = await axios.post('https://test-server-deploy-nine.vercel.app/web-pilot', prompt);
         const value = response.data;
         return value;
     } catch (error) {
@@ -13,12 +13,12 @@ export async function webPilotApiOutput(prompt) {
 
 
 
-export const webPilot = async (webPilotPlugin, user_input, webPilotPluginText, setBody, setMessages) => {
+export const webPilot = async (webPilotPlugin, user_input, webPilotPluginText, setBody, setMessages, apiKeyInput, urlInput) => {
 
     if (webPilotPlugin) {
         try {
             const response = await axios.post(
-                "https://chimeragpt.adventblocks.cc/v1/chat/completions",
+                urlInput.trim(),
                 {
                     messages: [
                         {
@@ -36,7 +36,7 @@ export const webPilot = async (webPilotPlugin, user_input, webPilotPluginText, s
                     headers: {
                         "Content-Type": "application/json",
                         Authorization:
-                            "Bearer u60hevlh8BewpPrqUJtGBkae4ZsvMuFxeUEE8A0s-E0",
+                            `Bearer ${apiKeyInput.trim()}`,
                     },
                 }
             );
