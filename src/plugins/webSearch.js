@@ -11,7 +11,7 @@ export async function webSearchApiOutput(prompt) {
     }
 }
 
-export const webSearch = async (webSearchPlugin, user_input, userInput, setBody, setMessages, apiKeyInput, urlInput) => {
+export const webSearch = async (webSearchPlugin, user_input, userInput, setBody, setMessages, apiKeyInput, urlInput, settingOptions) => {
 
     if (webSearchPlugin) {
         try {
@@ -19,7 +19,7 @@ export const webSearch = async (webSearchPlugin, user_input, userInput, setBody,
                 urlInput.trim(),
                 {
                     messages: [{ "role": "system", "content": "Search for information from the internet. You can easily suggest people anything. With the content provided to the users, you provide your own opinion based on the search results." }, { "role": "user", "content": `${user_input} Understand this info and answer me the following question ${userInput}` }],
-                    "model": "gpt-3.5-turbo"
+                    "model": settingOptions.model
                     // max_tokens: 1000,
                     // temperature: 0.7,
                 },

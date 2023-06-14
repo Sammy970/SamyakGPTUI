@@ -34,7 +34,7 @@ const Chat = () => {
     const [keyUrlEntered, setKeyUrlEntered] = useState(false);
 
     const [settingOptions, setSettingOptions] = useState({
-        "model": 'gpt-3.5-turbo',
+        "model": 'gpt-3.5-turbo-16k',
         "type": 'chat',
         "plugin": "off",
     })
@@ -148,7 +148,7 @@ const Chat = () => {
                     urlInput.trim(),
                     {
                         messages: [...body, newBodyUserMessage],
-                        model: "gpt-3.5-turbo-16k",
+                        model: settingOptions.model,
                         // max_tokens: 1000,
                         // temperature: 0.7,
                     },
@@ -205,7 +205,7 @@ const Chat = () => {
         }
         else if (settingOptions.plugin === 'web-search') {
             try {
-                await webSearch(webSearchPlugin, user_input, userInput, setBody, setMessages, apiKeyInput, urlInput);
+                await webSearch(webSearchPlugin, user_input, userInput, setBody, setMessages, apiKeyInput, urlInput, settingOptions);
             } catch (error) {
                 console.log(error);
             }

@@ -13,7 +13,7 @@ export async function webPilotApiOutput(prompt) {
 
 
 
-export const webPilot = async (webPilotPlugin, user_input, webPilotPluginText, setBody, setMessages, apiKeyInput, urlInput) => {
+export const webPilot = async (webPilotPlugin, user_input, webPilotPluginText, setBody, setMessages, apiKeyInput, urlInput, settingOptions) => {
 
     if (webPilotPlugin) {
         try {
@@ -28,7 +28,7 @@ export const webPilot = async (webPilotPlugin, user_input, webPilotPluginText, s
                         { "role": "user", "content": `${user_input} Understand this info and answer me the following question ${webPilotPluginText}` }
                     ],
 
-                    "model": "gpt-3.5-turbo"
+                    "model": settingOptions.model
                     // max_tokens: 1000,
                     // temperature: 0.7,
                 },
