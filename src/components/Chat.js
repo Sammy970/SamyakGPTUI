@@ -4,8 +4,6 @@ import "./Chat.css";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 
-// import { rephrasePrompt } from "prompt-perfect-plugin";
-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPaperPlane } from '@fortawesome/free-solid-svg-icons';
 
